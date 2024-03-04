@@ -1,0 +1,329 @@
+<ul class="colorpicker">
+    <li>
+        <span>表示する色を選択</span>
+        <input type="color" id="input_color" value="#e66465" style="display:none;vertical-align:middle;">
+        <label for="input_color" id="input_color_label" style="display:inline-block;width:50px;height:50px;
+        background:#e66465;border-radius:50px;vertical-align:middle;margin-left:70px;"></label>
+    </li>
+</ul>
+<ul class="parent">
+    <li>
+    <span>表示する項目を選択</span>
+    </li>
+</ul>
+<script type="text/javascript">
+
+    function tree(selection) {
+        selection.append("div")
+            .attr("class", "body")
+    }
+
+    function updateTree(selection, items) {
+        var root = d3.stratify()
+            .id(d => d.id)
+            .parentId(d => d.parent)(items);
+        selection.select(".body")
+            .call(nextLevel, root);
+        // Remove dummy root node
+        selection.select(".body > span").remove();
+    }
+
+    function nextLevel(selection, node) {
+        var label = selection.append("span")
+        var arrow = label.append("span").attr("class", "arrow");
+        label.call(renderNode, node.data);
+        if (!node.hasOwnProperty("children")) return;
+        if (node.parent == "root" || node.id == "root") {
+            var items = selection.append("ul")
+                .attr("class", "parent")
+                .selectAll("li")
+                .data(node.children, d => d.id);
+        }
+        else {
+            var items = selection.append("ul")
+                .attr("class", "children")
+                .style("display", "none")
+                .selectAll("li")
+                .data(node.children, d => d.id);
+        }
+        items.exit().remove();
+        items.enter()
+            .append("li").merge(items)
+            .each(function (d) {
+                d3.select(this).call(nextLevel, d);
+            });
+        label.select(".arrow")
+            .text("▶ ")
+            .on("click", function () {  // Collapse on click
+                var childList = selection.select("ul")
+                //if (!childList.size()) return;
+                var expanded = childList.style("display") !== "none";
+                d3.select(this).text(expanded ? "▶ " : "▼ ");
+                childList.style("display", expanded ? "none" : "inherit");
+            });
+    }
+
+    function renderNode(selection, rcd) {
+        if ((rcd.parent != "root") && (rcd.id != "root")) {
+            selection.append("span")
+                .attr("class", "item")
+                .text(rcd.name)
+                .style("vertical-align", "middle")
+
+            selection.append("input")
+                .style("vertical-align", "middle")
+                .style("height", "22.4px")
+                .attr("name", rcd.id)
+                .attr("type", "range")
+                .attr("value", 0)
+                .attr("min", -2)
+                .attr("max", 2)
+                .attr("step", 1)
+                .on("change", function (event) {
+                    //console.log(data)
+                    //console.log(this.value)
+                    //console.log(this.name)
+                    rcd.importance = this.value
+                    update()
+                })
+
+            selection.append("div")
+                .attr("class", "wrapper")
+                .append("button")
+                .attr("type", "button")
+                .attr("id", rcd.id + "_red")
+                .attr("class", "btn-circle-3d-red")
+                .on("click", function (event) {
+                    if (this.classList.contains("btn-circle-3d-red")) {
+                        d3.select(this)
+                            .classed("btn-circle-3d-red", false)
+                            .classed("btn-circle-selected-red", true);
+
+                        d3.select("#" + rcd.id + "_blue")
+                            .classed("btn-circle-selected-blue", false)
+                            .classed("btn-circle-3d-blue", true)
+
+                        d3.select("#" + rcd.id + "_green")
+                            .classed("btn-circle-selected-green", false)
+                            .classed("btn-circle-3d-green", true)
+
+                        d3.select("#"+rcd.id+"_pink")
+                            .classed("btn-circle-selected-pink", false)
+                            .classed("btn-circle-3d-pink", true)
+
+                        d3.select("#"+rcd.id+"_colorpicker")
+                            .classed("btn-circle-selected-colorpicker", false)
+                            .classed("btn-circle-3d-colorpicker", true)
+                    
+                        colorpicker_button = colorpicker_button.filter(item => item != rcd.index);
+
+                        rcd.display = "#ff8181"
+                    }
+                    else if(this.classList.contains("btn-circle-selected-red")) {
+                        d3.select(this)
+                            .classed("btn-circle-selected-red", false)
+                            .classed("btn-circle-3d-red", true)
+
+                        rcd.display = "#ffffff00"
+                    }
+                    update()
+                })
+
+            selection.select("div")
+                .append("button")
+                .attr("type", "button")
+                .attr("id", rcd.id + "_blue")
+                .attr("class", "btn-circle-3d-blue")
+                .on("click", function (event) {
+                    if (this.classList.contains("btn-circle-3d-blue")) {
+                        d3.select(this)
+                            .classed("btn-circle-3d-blue", false)
+                            .classed("btn-circle-selected-blue", true)
+
+                        d3.select("#" + rcd.id + "_red")
+                            .classed("btn-circle-selected-red", false)
+                            .classed("btn-circle-3d-red", true)
+
+                        d3.select("#" + rcd.id + "_green")
+                            .classed("btn-circle-selected-green", false)
+                            .classed("btn-circle-3d-green", true)
+
+                        d3.select("#" + rcd.id + "_pink")
+                            .classed("btn-circle-selected-pink", false)
+                            .classed("btn-circle-3d-pink", true)
+
+                        d3.select("#"+rcd.id+"_colorpicker")
+                            .classed("btn-circle-selected-colorpicker", false)
+                            .classed("btn-circle-3d-colorpicker", true)
+                
+                        colorpicker_button = colorpicker_button.filter(item => item != rcd.index);
+
+                        rcd.display = "#5c9ee7"
+                    }
+                    else if (this.classList.contains("btn-circle-selected-blue")) {
+                        d3.select(this)
+                            .classed("btn-circle-selected-blue", false)
+                            .classed("btn-circle-3d-blue", true)
+
+                        rcd.display = "#ffffff00"
+                    }
+                    update()
+                })
+
+            selection.select("div")
+                .append("button")
+                .attr("type", "button")
+                .attr("id", rcd.id + "_green")
+                .attr("class", "btn-circle-3d-green")
+                .on("click", function (event) {
+                    if (this.classList.contains("btn-circle-3d-green")) {
+                        d3.select(this)
+                            .classed("btn-circle-3d-green", false)
+                            .classed("btn-circle-selected-green", true)
+
+                        d3.select("#" + rcd.id + "_blue")
+                            .classed("btn-circle-selected-blue", false)
+                            .classed("btn-circle-3d-blue", true)
+
+                        d3.select("#" + rcd.id + "_red")
+                            .classed("btn-circle-selected-red", false)
+                            .classed("btn-circle-3d-red", true)
+
+                        d3.select("#" + rcd.id + "_pink")
+                            .classed("btn-circle-selected-pink", false)
+                            .classed("btn-circle-3d-pink", true)
+
+                        d3.select("#"+rcd.id+"_colorpicker")
+                            .classed("btn-circle-selected-colorpicker", false)
+                            .classed("btn-circle-3d-colorpicker", true)
+
+                        colorpicker_button = colorpicker_button.filter(item => item != rcd.index);
+
+                        rcd.display = "#81ff8e"
+                    }
+                    else if(this.classList.contains("btn-circle-selected-green")) {
+                        d3.select(this)
+                            .classed("btn-circle-selected-green", false)
+                            .classed("btn-circle-3d-green", true)
+
+                        rcd.display = "#ffffff00"
+                    }
+                    update()
+                })
+
+            selection.select("div")
+                .append("button")
+                .attr("type", "button")
+                .attr("id", rcd.id + "_pink")
+                .attr("class", "btn-circle-3d-pink")
+                .on("click", function (event) {
+                    if (this.classList.contains("btn-circle-3d-pink")) {
+                        d3.select(this)
+                            .classed("btn-circle-3d-pink", false)
+                            .classed("btn-circle-selected-pink", true)
+
+                        d3.select("#" + rcd.id + "_blue")
+                            .classed("btn-circle-selected-blue", false)
+                            .classed("btn-circle-3d-blue", true)
+
+                        d3.select("#" + rcd.id + "_green")
+                            .classed("btn-circle-selected-green", false)
+                            .classed("btn-circle-3d-green", true)
+
+                        d3.select("#"+rcd.id+"_red")
+                            .classed("btn-circle-selected-red", false)
+                            .classed("btn-circle-3d-red", true)
+
+                        d3.select("#"+rcd.id+"_colorpicker")
+                            .classed("btn-circle-selected-colorpicker", false)
+                            .classed("btn-circle-3d-colorpicker", true)
+                    
+                        colorpicker_button = colorpicker_button.filter(item => item != rcd.index);
+
+                        rcd.display = "#e05ce7"
+                    }
+                    else if(this.classList.contains("btn-circle-selected-pink")) {
+                        d3.select(this)
+                            .classed("btn-circle-selected-pink", false)
+                            .classed("btn-circle-3d-pink", true)
+                        
+                        rcd.display = "#ffffff00"
+                    }
+                    update()
+                })
+
+            selection.select("div")
+                .append("button")
+                .attr("type", "button")
+                .attr("name", "colorpickers")
+                .attr("id", rcd.id + "_colorpicker")
+                .attr("class", "btn-circle-3d-colorpicker")
+                .style("background", display_color)
+                .on("click", function (event) {
+                    if (this.classList.contains("btn-circle-3d-colorpicker")) {
+                        d3.select(this)
+                            .classed("btn-circle-3d-colorpicker", false)
+                            .classed("btn-circle-selected-colorpicker", true)
+
+                        d3.select("#" + rcd.id + "_blue")
+                            .classed("btn-circle-selected-blue", false)
+                            .classed("btn-circle-3d-blue", true)
+
+                        d3.select("#" + rcd.id + "_green")
+                            .classed("btn-circle-selected-green", false)
+                            .classed("btn-circle-3d-green", true)
+
+                        d3.select("#"+rcd.id+"_red")
+                            .classed("btn-circle-selected-red", false)
+                            .classed("btn-circle-3d-red", true)
+
+
+                        d3.select("#" + rcd.id + "_pink")
+                            .classed("btn-circle-selected-pink", false)
+                            .classed("btn-circle-3d-pink", true)
+                    
+                        colorpicker_button.push(rcd.index);
+
+                        rcd.display = display_color
+                    }
+                    else if(this.classList.contains("btn-circle-selected-colorpicker")) {
+                        d3.select(this)
+                            .classed("btn-circle-selected-colorpicker", false)
+                            .classed("btn-circle-3d-colorpicker", true)
+                        
+                        colorpicker_button = colorpicker_button.filter(item => item != rcd.index);
+                        rcd.display = "#ffffff00"
+                    }
+                    update()
+                })
+        }
+        else {
+            selection.append("span")
+                .text(rcd.name);
+        }
+    }
+
+    //colorpickerの値が変更されるたびにdisplay_colorの値,colorpickerと第5のボタンの表示色を変更する
+    var colorpicker = document.getElementById("input_color");
+    colorpicker.addEventListener("input", function (event) {
+        display_color = colorpicker.value
+
+        d3.select("#input_color_label")
+            .style("background", null)
+            .style("background", display_color)
+
+        var colorpickers_3d = document.getElementsByName("colorpickers")
+        d3.selectAll(colorpickers_3d)
+            .style("background", null)
+            .style("background", display_color)
+
+        colorpicker_button.forEach(element => data[element].display = display_color)
+
+        update()
+    });
+
+    d3.select("#sidebar").append("div")
+        .call(tree)
+        .call(updateTree, data);
+
+</script>

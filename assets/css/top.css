@@ -1,0 +1,77 @@
+/*テーマに沿った色変更*/
+body {
+  background-color: white;
+  color: black;
+}
+
+#site-header {
+  background-color: #262626;
+  color: white;
+  z-index: 3000;
+}
+
+#site-header .nav-button div span {
+  background-color: white;
+}
+
+#site-footer {
+  background-color: #262626;
+  color: white;
+}
+
+main {
+  font-size: 14px;
+  margin-bottom: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.wrapper {
+  position: relative;
+  width: 100%;
+}
+
+#content {
+  margin-left:auto;
+  margin-right: auto;
+  margin-top: 40px;
+  width: 600px
+}
+
+#content h2 {
+  font-size: 18px;
+}
+
+#content h3 {
+  font-size: 16px;
+}
+
+#content h4 {
+  font-size: 14px;
+}
+
+#content h2:not(:first-child) {
+  margin-top: 30px
+}
+
+#content h3:not(:first-child) {
+  margin-top: 20px
+}
+
+#content > h4:not(:first-child) {
+  margin-top: 10px
+}
+
+@media screen and (min-width: 1000px) {
+  #content {
+      width: 800px;
+  }
+}
+
+@media screen and (min-width: 1300px) {
+  #content {
+      width: 1000px;
+  }
+}

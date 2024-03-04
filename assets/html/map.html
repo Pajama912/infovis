@@ -1,0 +1,450 @@
+<script>
+    //zoomが13以下の場合表示を変更
+    var zoom_threshold = 13
+
+    //以下の2パラメータは要調整
+    var density_opacity = 0.6; //密度表示の透過度
+    //var density_rgb = d3.rgb(100, 255, 255); //密度表示の色
+    var density_size = 20; //密度表示の半径
+
+    var display_color = "#fe6363";
+
+    var point_color = ["none", "blue", "red"]; //点の色
+
+    //施設情報をすべて保持するhash
+    //構造としては，hashs{"university":["name": ~ , "LatLngObj": {"latitude": ~ , "longitude": ~ }], "cafe":[ ~ ]}
+    //のように，施設種をkeyとする連想配列の中に「「施設名，座標をkeyとする連想配列」の配列」が入っている
+    hashs = {
+        "school": [],
+        "college": [],
+        "cafe": [],
+        "convenience": [],
+        "fast-food": [],
+        "restaurant": [],
+        "kindergarten": [],
+        "library": [],
+        "post_box": [],
+        "post_office": [],
+        "police": [],
+        "hospital": [],
+        "park": [],
+        "fire_station": [],
+        "temple": [],
+        "shrine": [],
+        "toilets": [],
+        "supermarket": [],
+        "university": []
+    };
+
+    hashs_1 = {
+        "school": [],
+        "college": [],
+        "cafe": [],
+        "convenience": [],
+        "fast-food": [],
+        "restaurant": [],
+        "kindergarten": [],
+        "library": [],
+        "post_box": [],
+        "post_office": [],
+        "police": [],
+        "hospital": [],
+        "park": [],
+        "fire_station": [],
+        "temple": [],
+        "shrine": [],
+        "toilets": [],
+        "supermarket": [],
+        "university": []
+    };
+    hashs_4 = {
+        "school": [],
+        "college": [],
+        "cafe": [],
+        "convenience": [],
+        "fast-food": [],
+        "restaurant": [],
+        "kindergarten": [],
+        "library": [],
+        "post_box": [],
+        "post_office": [],
+        "police": [],
+        "hospital": [],
+        "park": [],
+        "fire_station": [],
+        "temple": [],
+        "shrine": [],
+        "toilets": [],
+        "supermarket": [],
+        "university": []
+    };
+    hashs_16 = {
+        "school": [],
+        "college": [],
+        "cafe": [],
+        "convenience": [],
+        "fast-food": [],
+        "restaurant": [],
+        "kindergarten": [],
+        "library": [],
+        "post_box": [],
+        "post_office": [],
+        "police": [],
+        "hospital": [],
+        "park": [],
+        "fire_station": [],
+        "temple": [],
+        "shrine": [],
+        "toilets": [],
+        "supermarket": [],
+        "university": []
+    };
+    hashs_256 = {
+        "school": [],
+        "college": [],
+        "cafe": [],
+        "convenience": [],
+        "fast-food": [],
+        "restaurant": [],
+        "kindergarten": [],
+        "library": [],
+        "post_box": [],
+        "post_office": [],
+        "police": [],
+        "hospital": [],
+        "park": [],
+        "fire_station": [],
+        "temple": [],
+        "shrine": [],
+        "toilets": [],
+        "supermarket": [],
+        "university": []
+    };
+
+    fourth_hash = {
+        "restaurant": []
+    }
+    //項目が増えるごとにここに項目を追加
+
+    //表示用パラメータ保持するhash
+    var display_hash = {};
+
+    hashs_ = {
+        "school": [],
+        "college": [],
+        "cafe": [],
+        "convenience": [],
+        "fast-food": [],
+        "restaurant": [],
+        "kindergarten": [],
+        "library": [],
+        "post_box": [],
+        "post_office": [],
+        "police": [],
+        "hospital": [],
+        "park": [],
+        "fire_station": [],
+        "shrine": [],
+        "temple": [],
+        "toilets": [],
+        "supermarket": [],
+        "university": []
+    };
+
+    //display_hash["cafe"] = [data[2].display, data[2].importance]//test
+    //display_hash["fast-food"] = [data[3].display, data[3].importance]//test
+
+    console.log(display_hash);
+
+    //Leaflet初期設定
+    var map = L.map('map').setView([35.678707, 139.739143], 15); //初期表示座標と縮尺
+    var mapLink = '<a target="_blank" href="http://portal.cyberjapan.jp/help/termsofuse.html">国土地理院 地理院地図 標準地図</a>';
+
+    //Leafletにsvgレイヤーを追加
+    L.svg().addTo(map);
+
+    map.createPane('labels')
+    map.getPane('labels').style.zIndex = 450;
+    map.getPane('labels').style.pointerEvents = 'none';
+    //Tile Map Serviceの指定
+    //var tile = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // var tile1 = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-background/{z}/{x}/{y}.png', {
+    //     maxZoom: 19,
+    //     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    // }).addTo(map);
+
+    // var tile2 = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}.png', {
+    //     maxZoom: 19,
+    //     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    //     pane: 'labels'
+    // }).addTo(map);
+    // var tile1 = L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_toner_background/{z}/{x}/{y}{r}.png', {
+    //     maxZoom: 19,
+    //     attribution: '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> ' +
+    //                 '&copy; <a href="https://stamen.com/" target="_blank">Stamen Design</a> ' +
+    //                 '&copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> ' +
+    //                 '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
+    // }).addTo(map);
+
+    // var tile2 = L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_toner_labels/{z}/{x}/{y}{r}.png', {
+    //     maxZoom: 19,
+    //     attribution: '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> ' +
+    //                 '&copy; <a href="https://stamen.com/" target="_blank">Stamen Design</a> ' +
+    //                 '&copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> ' +
+    //                 '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
+    //     pane: 'labels'
+    // }).addTo(map);
+    var tile1 = L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_toner_background/{z}/{x}/{y}{r}.png?api_key=400fbe24-2e9e-49b2-85a1-d78715d2f4fc', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> ' +
+                    '&copy; <a href="https://stamen.com/" target="_blank">Stamen Design</a> ' +
+                    '&copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> ' +
+                    '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
+    }).addTo(map);
+
+    var tile2 = L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_toner_labels/{z}/{x}/{y}{r}.png?api_key=400fbe24-2e9e-49b2-85a1-d78715d2f4fc', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> ' +
+                    '&copy; <a href="https://stamen.com/" target="_blank">Stamen Design</a> ' +
+                    '&copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> ' +
+                    '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
+        pane: 'labels'
+    }).addTo(map);
+
+
+
+    // svg要素を選択
+    var svg = d3.select('#map').select('svg')
+        .attr('class', 'leaflet-zoom-hide');//zoom中隠すかどうか。オプショナルにできると良い
+
+    //グラデーションの設定
+    var grad = svg.append('defs')
+        .append("filter")
+        .attr("id", "gaussian-blur")
+        .attr("filterUnits", "userSpaceOnUse")
+        .append("feGaussianBlur") //ガウス分布になる。ここ線形にしたらどうなるかみてみたい
+        .attr("in", "SourceGraphic")
+        .attr("stdDeviation", density_size);
+
+    update = function () {
+        if(map.getZoom() >= 15) {
+            console.log('hashs_1');
+            hashs = hashs_1;
+        }else if(map.getZoom() >= 14) {
+            console.log('hashs_4');
+            hashs = hashs_4
+        }else if(map.getZoom() >= 13) {
+            console.log('hashs_16');
+            hashs = hashs_16;
+        }else{
+            console.log('hashs_256');
+            hashs = hashs_256;
+        }
+        //console.log((data[order[i]].display).substr(1, 2))
+        for (var k in data) {
+            if (data[k].id != "root" && data[k].parent != "root") {
+                //console.log(data[k]);
+                display_hash[data[k].id] = [Number(data[k].importance), ho_color(data[k].display)];
+            }
+            //console.log(display_hash);
+        }
+        console.log(display_hash);
+        bounds = map.getBounds()
+        hashs_ = {
+            "school": [],
+            "college": [],
+            "cafe": [],
+            "convenience": [],
+            "fast-food": [],
+            "restaurant": [],
+            "kindergarten": [],
+            "library": [],
+            "post_box": [],
+            "post_office": [],
+            "police": [],
+            "hospital": [],
+            "park": [],
+            "fire_station": [],
+            "temple": [],
+            "shrine": [],
+            "toilets": [],
+            "supermarket": [],
+            "university": []
+        };
+        reset()
+        for (let key in hashs) {
+            for (let hash of hashs[key]) {
+                lat = hash['LatLngObj']['lat']
+                lng = hash['LatLngObj']['lng']
+                if (lat < bounds['_northEast']['lat'] && lat > bounds['_southWest']['lat'] && lng < bounds['_northEast']['lng'] && lng > bounds['_southWest']['lng']) {
+                    hashs_[key].push(hash)
+                }
+            }
+        }
+
+        for (var k in display_hash) {
+            if (display_hash[k][0] != 0) {
+                //https://colorcodesearch.com/hosyokukeisan/
+                //このサイトをもとに良さげな補色を持つ色rgb(99,237,237)を選択
+                console.log((display_hash[k][1])[display_hash[k][0] + 2])
+                showDensity(k, (display_hash[k][1])[display_hash[k][0] + 2], density_opacity);
+            }
+        }
+        for (var k in display_hash) {
+            if (display_hash[k][0] == 0 && !((display_hash[k][1])[4].r == 255 && (display_hash[k][1])[4].g == 255 && (display_hash[k][1])[4].b == 255)) {
+                showPoint(k, (display_hash[k][1])[4], 2)
+            }
+            if (display_hash[k][0] > 0) {
+                showPoint(k, (display_hash[k][1])[4], 2)
+            }
+            if (display_hash[k][0] < 0) {
+                showPoint(k, (display_hash[k][1])[0], 2)
+            }
+        }
+
+        //すべてのcircle要素の位置をアップデートする
+        //console.log('update');
+        svg.selectAll("circle")
+            .attr('transform', function (d) {
+                return (
+                    'translate(' + map.latLngToLayerPoint(d.LatLngObj).x + ',' + map.latLngToLayerPoint(d.LatLngObj).y + ')'
+                );
+            });
+    }
+
+    //施設種，座標，施設名の全情報を取得，hashに入れ，処理を行う(処理はthenの中で，非同期処理)
+    //d3.csv("./data/osm/small_area:tokyo.csv").then(function (data) {
+    d3.csv("./data/osm/area:tokyo.csv").then(function (point_data) {
+        //元データにLeafletのLatLngobjを追加し，lat,lng自体は消去(メモリ消費量は変わってない？（解放されてない？）)
+        point_data.forEach(function (d) {
+            d.LatLngObj = new L.LatLng(d.latitude, d.longitude);
+            delete d.latitude;
+            delete d.longitude;
+            //console.log(d.key)
+            hashs_1[d.key].push(d)
+        });
+
+        //移動操作の終わりでupdate関数を適用
+        map.on('moveend', update);
+        update();
+    })
+
+    d3.csv("./data/osm/area:tokyo_4.csv").then(function (point_data) {
+        //元データにLeafletのLatLngobjを追加し，lat,lng自体は消去(メモリ消費量は変わってない？（解放されてない？）)
+        point_data.forEach(function (d) {
+            d.LatLngObj = new L.LatLng(d.latitude, d.longitude);
+            delete d.latitude;
+            delete d.longitude;
+            //console.log(d.key)
+            hashs_4[d.key].push(d)
+        });
+    });
+
+    d3.csv("./data/osm/area:tokyo_16.csv").then(function (point_data) {
+        //元データにLeafletのLatLngobjを追加し，lat,lng自体は消去(メモリ消費量は変わってない？（解放されてない？）)
+        point_data.forEach(function (d) {
+            d.LatLngObj = new L.LatLng(d.latitude, d.longitude);
+            delete d.latitude;
+            delete d.longitude;
+            //console.log(d.key)
+            hashs_16[d.key].push(d)
+        });
+    });
+
+    d3.csv("./data/osm/area:tokyo_256.csv").then(function (point_data) {
+        //元データにLeafletのLatLngobjを追加し，lat,lng自体は消去(メモリ消費量は変わってない？（解放されてない？）)
+        point_data.forEach(function (d) {
+            d.LatLngObj = new L.LatLng(d.latitude, d.longitude);
+            delete d.latitude;
+            delete d.longitude;
+            //console.log(d.key)
+            hashs_256[d.key].push(d)
+        });
+    });
+
+    function reset() {
+        svg
+            .selectAll(".density")
+            .remove();
+
+        svg
+            .selectAll(".point")
+            .remove();
+    }
+
+    //密度を表示("施設種", 色(rgb), 透明度)
+    function showDensity(name, color, opacity) {
+        console.log(hashs_)
+        svg
+            .selectAll("#" + name + "density")
+            //.data(hashs[name])
+            .data(hashs_[name])
+            .enter()
+            .append('circle')
+            .attr("r", function(){
+                if(color.r == 255 && color.g == 255 && color.b == 255){
+                    return 0
+                }
+                return 20
+            })
+            .attr("fill", color)
+            .attr("filter", function(){
+                //if(map.getZoom()<=zoom_threshold){return "";}
+                return "url(#gaussian-blur)";
+            })
+            .attr("opacity", /*function(){
+                if(map.getZoom()>=15){return opacity}
+                return opacity/(4**(Math.min(15-map.getZoom(),2)))
+            }*/opacity) //透明度(線の下に置いたりしたいかも→順番を変えることで置けた)
+            .attr("class", "density")
+            .attr("id", name + "density") //座標を表す点
+    }
+
+    //座標を表示("施設種"，点の色，点の大きさ)
+    function showPoint(name, fill_color, r) {
+        if(map.getZoom()<=zoom_threshold){return;}
+        svg
+            .selectAll("#" + name + "point")
+            //.data(hashs[name])
+            .data(hashs_[name])
+            .enter()
+            .append('circle')
+            .attr("class", "point")//座標を表す点
+            .attr("id", name + "point")
+            .attr('stroke', "black")
+            .attr('stroke-width', 1)
+            .attr('fill', fill_color)
+            .attr('fill-opacity', 1)
+            .attr('r', r);
+    }
+
+    function ho_color(colorcode) {//補色
+        // 2文字ずつ取得し、16進数から10進数に
+        r = parseInt(colorcode.substr(1, 2), 16);
+        g = parseInt(colorcode.substr(3, 2), 16);
+        b = parseInt(colorcode.substr(5, 2), 16);
+
+        // 最大値と最小値の和を算出
+        buf = Math.max(r, g, b) + Math.min(r, g, b);
+
+        // 補色のRGB値を計算し、16進数に変換(dechex)
+        newr = buf - r;
+        newg = buf - g;
+        newb = buf - b;
+
+        r_light = Math.floor((r + 255) / 2);
+        g_light = Math.floor((g + 255) / 2);
+        b_light = Math.floor((b + 255) / 2);
+
+        newr_light = Math.floor((newr + 255) / 2);
+        newg_light = Math.floor((newg + 255) / 2);
+        newb_light = Math.floor((newb + 255) / 2);
+
+        return [d3.rgb(newr, newg, newb),
+        d3.rgb(newr_light, newg_light, newb_light),
+        d3.rgb(255, 255, 255),
+        d3.rgb(r_light, g_light, b_light),
+        d3.rgb(r, g, b)]
+    }
+
+</script>

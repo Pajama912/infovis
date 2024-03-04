@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="description" content="">
+  <link rel="stylesheet" type="text/css" href="./assets/css/common.css">
+  <link rel="stylesheet" type="text/css" href="./assets/css/top.css">
+  <link rel="stylesheet" type="text/css" href="./assets/css/map.css">
+  <link rel="stylesheet" type="text/css" href="./assets/css/sidebar.css">
+  <!-- <link rel="canonical" href="https://XXXXXXXXXXXXXXXXXXX.com"> -->
+  <title>SixTean</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="./d3.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
+    integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
+    integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
+  <script type="text/javascript" src="./d3.js"></script>
+  <script src="assets/js/top.js"></script>
+</head>
+
+<body ontouchstart="";>
+  <header id="site-header"></header>
+  <main>
+    <div class="wrapper">
+      <div id="map"></div>
+      <div id="sidebar"></div>
+    </div>
+    <div id="content">
+      <h2 id="how_to_use">使い方</h2>
+        <p>このアプリは東京都の地図を使って、様々な施設の密度を色で示します。地図は拡大・縮小や移動が自由にでき、右側のメニューから施設を選び、トラックバーを動かすと、その施設が集まっている場所ほど濃い色で表示されます。実際の位置は小さな点で示されます。</p>
+        <p>色はデフォルトの4色から選ぶことも、お好みで1色追加することも可能です。施設の重要度はトラックバーで調節でき、右に動かすと表示が濃く、左に動かすと補色で表示されます。</p>
+        <h3>使用例</h3>
+        <p><strong>例1:</strong> 新しい消防署の建設地を探す時、消防署や病院などの施設を選んで地図上で分布をチェック。最適な建設地がすぐに分かります。</p>
+        <p><strong>例2:</strong> 引越し先を選ぶ時にも便利です。例えば、東大生が本郷地区での一人暮らしを考えている場合、カフェを重視して赤で、小学校や幼稚園を避けたい場合にはそれらを補色で表示させて、最適な地域を見つけられます。お寺や神社好きなら、それらの場所も色で表示して、好みに合った場所を探せます。</p>
+      <p></p>
+      <h2 id="tech">使用した技術</h2>
+      <h3>ライブラリ</h3>
+      <ul>
+        <li>
+          <h4>d3.js</h4>
+          <p>地図上に表示するsvgの生成</p>
+        </li>
+        <li>
+          <h4>jquery</h4>
+          <p>javascriptの遅延読み込み、ハンバーガーボタンの作成</p>
+        </li>
+        <li>
+          <h4>leaflet</h4>
+          <p>地図の描画</p>
+        </li>
+      </ul>
+      <h3>データ</h3>
+      <ul>
+        <li>
+          <h4>Open Street Map</h4>
+          <p>座標データ</p>
+        </li>
+        <li>
+          <h4>stamen</h4>
+          マップタイル
+        </li>
+      </ul>
+    </div>
+  </main>
+  <footer id="site-footer"></footer>
+</body>
+
+</html>

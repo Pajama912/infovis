@@ -1,0 +1,178 @@
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  font-family: 游ゴシック体, 'Yu Gothic', YuGothic, 'ヒラギノ角ゴシック Pro', 'Hiragino Kaku Gothic Pro', メイリオ, Meiryo, Osaka, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif;
+  min-height: 100vh;
+  min-width: 800px;
+}
+
+/*common*/
+* {
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+*:focus {
+  outline: none;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+}
+
+table {
+  text-align: left;
+  border-collapse: collapse;
+  margin: 0 auto 0 auto;
+}
+
+table tr {
+  border-bottom: solid 1px gainsboro;
+}
+
+table th,
+table td {
+  padding: 10px;
+  font-size: 14px;
+  max-width: 50%;
+}
+
+.clearfix::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+/*header*/
+#site-header .header-inner {
+  height: 64px;
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 1200px;
+  position: relative;
+}
+
+#site-header .nav-wrapper {
+  background-color: #262626;
+  display: none;
+  overflow: hidden;
+  padding: 20px 0;
+  position: absolute;
+  top: 64px;
+  width: 100%;
+  z-index: 1;
+}
+
+#site-header .header-nav {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+#site-header .header-nav .menu > li {
+  text-align: center;
+}
+
+#site-header .header-nav .menu > li:not(:first-child) {
+  margin-top: 20px;
+}
+
+#site-header .header-nav .menu > li > a {
+  color: white;
+  display: block;
+  font-weight: bold;
+  height: 20px;
+  line-height: 20px;
+}
+
+#site-header .header-nav .menu > li > a:hover {
+  color: gainsboro;
+}
+
+.header-items li:first-child {
+  left: 20px;
+}
+
+.header-items li:nth-child(2) {
+  right: 0;
+}
+
+#site-title {
+  font-size: 16px;
+  position: absolute;
+  left: 20px;
+  line-height: 64px;
+}
+
+#site-header .nav-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+}
+
+#site-header .nav-button div {
+  width: 64px;
+  height: 64px;
+  position: relative;
+}
+
+#site-header .nav-button div span {
+  position: absolute;
+  height: 1px;
+  width: 17px;
+  left: 22px;
+  transition-duration: 1s;
+}
+
+#site-header .nav-button div span:first-child {
+  top: 25px;
+}
+
+#site-header .nav-button div span:nth-child(2) {
+  top: 31px;
+}
+
+#site-header .nav-button div span:last-child {
+  top: 37px;
+}
+
+#site-header.opened .nav-button span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+#site-header.opened .nav-button span:nth-child(2) {
+  transform: translateX(-10px);
+  opacity: 0;
+}
+
+#site-header.opened .nav-button span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/*footer*/
+#site-footer {
+  margin-top: auto;
+  padding: 16px
+}
+
+#site-footer p {
+  font-size: 14px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+}
